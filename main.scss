@@ -89,7 +89,7 @@ main {
 }
 
 .container {
-  max-width: 1024px;
+  max-width: 1140px;
   margin: 0 auto;
 }
 
@@ -103,6 +103,16 @@ main {
 
 .col-33 {
   width: 33.33%;
+  flex: 0 0 auto;
+}
+
+.col-40 {
+  width: 40%;
+  flex: 0 0 auto;
+}
+
+.col-60 {
+  width: 60%;
   flex: 0 0 auto;
 }
 
