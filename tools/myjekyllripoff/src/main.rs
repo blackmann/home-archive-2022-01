@@ -5,6 +5,8 @@ use std::io::{Read, Write};
 use std::path::{Path};
 use std::sync::mpsc::channel;
 use std::time::Duration;
+use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
+use chrono::serde::ts_seconds_option;
 use comrak::{Arena, ComrakOptions, format_html, parse_document};
 use comrak::nodes::NodeValue;
 use notify::{DebouncedEvent, RecursiveMode, watcher, Watcher};
@@ -17,36 +19,11 @@ const POSTS_LAYOUT: &str = "./layouts/post.liquid";
 const HOME_LAYOUT: &str = "./layouts/home.liquid";
 const MAIN_LAYOUT: &str = "./layouts/main.liquid";
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Date {
-    day: i32,
-    month: i32,
-    year: i32,
-}
-
-impl Date {
-    fn parse(date: &str) -> Date {
-        let parts: Vec<&str> = date.trim().split('-').collect();
-
-        Date {
-            day: parts[0].parse::<i32>().unwrap(),
-            month: parts[1].parse::<i32>().unwrap(),
-            year: parts[2].parse::<i32>().unwrap(),
-        }
-    }
-
-    fn to_human_str(&self) -> String {
-        let months = vec!["January", "February", "March", "April",
-                         "May", "June", "July", "August", "September", "October", "November", "December"];
-
-        let month_post: usize = (self.month - 1) as usize;
-        return format!("{} {} {}", self.day, months[month_post], self.year);
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct PostMeta {
-    date: Option<Date>,
+    #[serde(with = "ts_seconds_option")]
+    date: Option<DateTime<Utc>>,
     draft: bool,
     next: Option<String>,
     slug: Option<String>,
@@ -82,7 +59,18 @@ impl PostMeta {
                     "title" => post_meta.title = Some(String::from(value)),
                     "slug" => post_meta.slug = Some(String::from(value)),
                     "draft" => post_meta.draft = value == "true",
-                    "date" => post_meta.date = Some(Date::parse(value)),
+                    "date" => {
+                        let parts: Vec<&str> = value.split('-').collect();
+
+                        let day = parts[0].parse::<u32>().unwrap();
+                        let month = parts[1].parse::<u32>().unwrap();
+                        let year = parts[2].parse::<i32>().unwrap();
+
+                        let dt: NaiveDateTime = NaiveDate::from_ymd(year,month,day)
+                            .and_hms(0,0,0);
+
+                        post_meta.date = Some(DateTime::<Utc>::from_utc(dt, Utc));
+                    },
                     "title_meta" => post_meta.title_meta = Some(String::from(value)),
                     "next" => post_meta.next = Some(String::from(value)),
                     _ => ()
@@ -162,6 +150,10 @@ impl BuildInstance {
             }
         }
 
+        self.posts.sort_by(|post1, post2| {
+            return post2.meta.as_ref().unwrap().date.cmp(&post1.meta.as_ref().unwrap().date);
+        });
+
         Ok(())
     }
 
@@ -215,16 +207,18 @@ impl BuildInstance {
         let final_template = liquid::ParserBuilder::with_stdlib()
             .build().unwrap().parse(final_template_str.as_str()).unwrap();
 
-        for post in self.posts.iter() {
+        for (index, post) in self.posts.iter().enumerate() {
             let title = post.meta.as_ref().unwrap().title.as_ref().unwrap();
             let slug = post.meta.as_ref().unwrap().slug.as_ref().unwrap();
-            let date = post.meta.as_ref().unwrap().date.as_ref().unwrap().to_human_str();
+            let date = format!("{}", post.meta.as_ref().unwrap().date.unwrap().format("%d %B %G"));
+
+            let related_posts = self.get_related_posts(index);
 
             let post_globals = liquid::object!({
                 "date": date,
                 "title": title,
                 "content": post.raw_content.as_ref().unwrap(),
-                "posts": self.posts,
+                "posts": related_posts,
                 "slug": slug
             });
 
@@ -233,7 +227,8 @@ impl BuildInstance {
             let final_globals = liquid::object!({
                 "content": post_output,
                 "description": "",
-                "title": title
+                "title": title,
+                "show_home": 1
             });
 
             let final_output = final_template.render(&final_globals).unwrap();
@@ -252,6 +247,30 @@ impl BuildInstance {
         }
 
         Ok(())
+    }
+
+    fn get_related_posts(&self, mut cursor_index: usize) -> Vec<&Post> {
+        let mut results: Vec<&Post> = vec![];
+
+        let mut start = if cursor_index >= 3 { cursor_index - 3 } else { 0 };
+
+
+        while start <= cursor_index {
+            let post = self.posts.get(start).unwrap();
+            results.push(post);
+
+            start += 1;
+        }
+
+        cursor_index += 1;
+
+        while results.len() < 6 && cursor_index < self.posts.len() {
+            results.push(self.posts.get(cursor_index).unwrap());
+
+            cursor_index += 1;
+        }
+
+        results
     }
 
     fn process_asset(path: &Path, sub_folder: &str) -> Result<(), Box<dyn Error>> {
