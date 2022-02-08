@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>I built a Jekyll rip-off with Rust one weekend | Not Gr / blackmann</title>
+    <link rel="stylesheet" href="/static/main.css"/>
+    <meta name="description"
+          content="How I created a static site generator with Rust (inexperienced) in one weekend."/>
+    <meta name="theme-color" content="#efefef"/>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SB4PQVZYY0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+
+      gtag('config', 'G-SB4PQVZYY0');
+    </script>
+</head>
+<body>
+<main>
+    <header class="container ph-1">
+        
+            <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
+        
+    </header>
+    <div class="container mt-3">
+    <div class="row">
+        <div class="col-66">
+            <div class="ph-1">
+                <h1>I built a Jekyll rip-off with Rust one weekend</h1>
+                <p class="text-gray">Written 07 February 2022 
+                </p>
+
+                <article>
+                    <p>For so long I've been wanting to redo my homepage, this time with an easier blogging component.
+I've tried to use <a href="https://nextjs.org">Next JS</a> with <a href="https://mdxjs.com">MDX</a> but the experience at the end of the day was going to feel more like coding, than writing [to me].
+Other options included static site generators like <a href="https://jekyllrb.com">Jekyll</a>, <a href="https://hexo.io">Hexo</a>, etc.
+But these solutions came with their troubles: overriding a lot of stuff.</p>
+<p>Throughout this period, it felt like I had to learn these systems and then customize them [with configurations] per my preference.
+That friction prevented the need to get through setting up my personal homepage.</p>
+<p>About two weeks ago, I picked up <a href="https://rust-lang.org">Rust 🦀</a> because I began to grow some obsession for it.
+I skimmed through the <a href="https://doc.rust-lang.org/book/">Rust Book</a> and tried to compare it with other languages I know.
+Syntax, semantics, thought process. I also picked up <a href="https://github.com/rust-lang/rustlings"><em>Rust koans</em></a> (actually known as <code>rustlings</code>) and completed a few exercises.</p>
+<h2>What happened</h2>
+<p>Last weekend, despite my immature experience with Rust, I decided to build a tool that will help me generate my site from <code>.md</code> files.
+I felt that would be <em>more lazier</em> and convenient than learning a these existing site generators 😉.
+Just like how Jekyll and the rest works. So I laid out the process based on how I understood static generators worked.</p>
+<script src="https://gist.github.com/blackmann/d72a975aaae5e079e5ae339dfe20fcf0.js"></script>
+<h4>Breakdown</h4>
+<p><code>.initialize</code></p>
+<p>In here I gather all the <code>.md</code> files from the <code>posts</code> directory then convert them into plain HTML string using <a href="https://github.com/kivikakk/comrak">comrak</a>. While parsing the markdown, I scan out the <code>front matter</code> which include necessary metadata that form a <code>Post</code>.
+This method needs to be called first. The other methods can be called in any order.</p>
+<p><code>.build_posts</code></p>
+<p>The requirement for this method is to load a template (<code>HTML</code>) and then iterate through all the gathered posts [from <code>.initialize</code>], insert the parsed <code>.md</code> contents and output each post into separate HTML files.
+Simple.
+The <a href="https://shopify.github.io/liquid/">Liquid</a> templating language is the perfect solution for defining our posts' template.
+Liquid is just same old HTML but with super-powers. I only borrowed a few powers like <code>iteration</code> and <code>control flow</code>.
+It allows us to also work variables that we can use in our template.</p>
+<p><code>.build_home</code></p>
+<p>This method uses the same idea as <code>.build_posts</code>. Which is, I load a home template (written in Liquid) and pass it the list of posts.
+This list is used to prepare the <em>list</em> of blog posts on the home.</p>
+<h2>Voila</h2>
+<p>In these three easy steps, my <em>rip-off</em> works. There are only pros to this approach (of writing my own generator).</p>
+<ul>
+<li>I only spent about 8 hours (net time) on it. I think this is better than finding the correct configurations for a static site generator over days (gross).</li>
+<li>I happened to learn a lot about Rust. More experience. <em>I'm now a <a href="https://twitter.com/__degreat">rustaman</a></em></li>
+<li>I understand some intrinsics of a static site generator.</li>
+</ul>
+<h2>The source</h2>
+<p>If you reached here. Thanks. You found a treasure 💎: <a href="https://github.com/blackmann/blackmann.github.io"><code>blackmann/blackmann.github.io</code></a>. The source to <code>myjekyllripoff</code>.</p>
+
+                </article>
+            </div>
+        </div>
+
+        <div class="col-33 stealth">
+            <div class="ph-1">
+                <h5 class="fs-1">Continue Reading…</h5>
+
+                <ul>
+                    
+                        <li class="animate-list-entry">
+                            <a href="/posts/jekyll-ripoff-project.html"
+                               class="d-block rounded bg-light-hover p-1 cursor-pointer">
+                                    <span class="fs-1 fw-medium mt-0 text-gray">
+                                        I built a Jekyll rip-off with Rust one weekend
+                                    </span>
+                                
+                                    &mdash; <small
+                                        class="text-gray font-primary fw-normal">Fun</small>
+                                
+                            </a>
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+</body>
+</html>

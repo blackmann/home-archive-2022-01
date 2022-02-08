@@ -1,4 +1,5 @@
 use std::{fs};
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs::read_dir;
 use std::io::{Read, Write};
@@ -26,27 +27,23 @@ struct PostMeta {
     date: Option<DateTime<Utc>>,
     draft: bool,
     next: Option<String>,
-    slug: Option<String>,
-    title: Option<String>,
+    slug: String,
+    title: String,
+    description: String,
     title_meta: Option<String>,
 }
 
 impl PostMeta {
-    fn new() -> PostMeta {
-        PostMeta {
-            date: None,
-            draft: false,
-            next: None,
-            slug: None,
-            title: None,
-            title_meta: None,
-        }
-    }
-
     fn parse(matter: &str) -> PostMeta {
         let lines = matter.split('\n');
 
-        let mut post_meta = PostMeta::new();
+        let mut title = String::new();
+        let mut date = None;
+        let mut slug = String::new();
+        let mut draft = false;
+        let mut next = None;
+        let mut title_meta = None;
+        let mut description = String::new();
 
         for row in lines {
             if row != FRONT_MATTER_DELIMITER && !row.is_empty() {
@@ -56,9 +53,9 @@ impl PostMeta {
                 let value = key_value[1].trim();
 
                 match key {
-                    "title" => post_meta.title = Some(String::from(value)),
-                    "slug" => post_meta.slug = Some(String::from(value)),
-                    "draft" => post_meta.draft = value == "true",
+                    "title" => title = String::from(value),
+                    "slug" => slug = String::from(value),
+                    "draft" => draft = value == "true",
                     "date" => {
                         let parts: Vec<&str> = value.split('-').collect();
 
@@ -66,19 +63,28 @@ impl PostMeta {
                         let month = parts[1].parse::<u32>().unwrap();
                         let year = parts[2].parse::<i32>().unwrap();
 
-                        let dt: NaiveDateTime = NaiveDate::from_ymd(year,month,day)
-                            .and_hms(0,0,0);
+                        let dt: NaiveDateTime = NaiveDate::from_ymd(year, month, day)
+                            .and_hms(0, 0, 0);
 
-                        post_meta.date = Some(DateTime::<Utc>::from_utc(dt, Utc));
-                    },
-                    "title_meta" => post_meta.title_meta = Some(String::from(value)),
-                    "next" => post_meta.next = Some(String::from(value)),
+                        date = Some(DateTime::<Utc>::from_utc(dt, Utc));
+                    }
+                    "title_meta" => title_meta = Some(String::from(value)),
+                    "next" => next = Some(String::from(value)),
+                    "description" => description = String::from(value),
                     _ => ()
                 }
             }
         }
 
-        post_meta
+        PostMeta {
+            date,
+            title,
+            draft,
+            slug,
+            next,
+            title_meta,
+            description
+        }
     }
 }
 
@@ -208,27 +214,43 @@ impl BuildInstance {
             .build().unwrap().parse(final_template_str.as_str()).unwrap();
 
         for (index, post) in self.posts.iter().enumerate() {
-            let title = post.meta.as_ref().unwrap().title.as_ref().unwrap();
-            let slug = post.meta.as_ref().unwrap().slug.as_ref().unwrap();
+            let title = post.meta.as_ref().unwrap().title.to_owned();
+            let slug = post.meta.as_ref().unwrap().slug.to_owned();
             let date = format!("{}", post.meta.as_ref().unwrap().date.unwrap().format("%d %B %G"));
 
             let related_posts = self.get_related_posts(index);
+
+            // OPTIMIZE: Create slug index to find next post quickly
+            let mut next_post = None;
+
+            if let Some(next) = post.meta.as_ref().unwrap().next.to_owned() {
+                let related_post = self.posts.iter()
+                    .find(|&post| post.meta.as_ref().unwrap().slug == next).unwrap();
+
+                next_post = Some(HashMap::from([
+                    ("title", related_post.meta.as_ref().unwrap().title.to_owned()),
+                    ("slug", related_post.meta.as_ref().unwrap().slug.to_owned()),
+                ]));
+
+                println!("   -> {}", next_post.as_ref().unwrap().get("title").unwrap());
+            }
 
             let post_globals = liquid::object!({
                 "date": date,
                 "title": title,
                 "content": post.raw_content.as_ref().unwrap(),
                 "posts": related_posts,
-                "slug": slug
+                "slug": slug,
+                "next_post": next_post
             });
 
             let post_output = post_template.render(&post_globals).unwrap();
 
             let final_globals = liquid::object!({
                 "content": post_output,
-                "description": "",
+                "description": post.meta.as_ref().unwrap().description,
                 "title": title,
-                "show_home": 1
+                "show_home": true
             });
 
             let final_output = final_template.render(&final_globals).unwrap();
@@ -236,7 +258,7 @@ impl BuildInstance {
             fs::create_dir_all("dist/posts/")?;
 
             let file_name = format!("dist/posts/{}.html",
-                                    post.meta.as_ref().unwrap().slug.as_ref().unwrap());
+                                    post.meta.as_ref().unwrap().slug);
 
             let mut out_file = fs::File::options().write(true).create(true)
                 .truncate(true).open(String::from(&file_name))?;

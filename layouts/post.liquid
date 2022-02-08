@@ -1,0 +1,40 @@
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-66">
+            <div class="ph-1">
+                <h1>{{ title }}</h1>
+                <p class="text-gray">Written {{ date }} {% if next_post %}
+                        &mdash; Continue with <a href="/posts/{{ next_post.slug }}.html">{{ next_post.title }}</a>
+                    {% endif %}
+                </p>
+
+                <article>
+                    {{ content }}
+                </article>
+            </div>
+        </div>
+
+        <div class="col-33 stealth">
+            <div class="ph-1">
+                <h5 class="fs-1">Continue Reading…</h5>
+
+                <ul>
+                    {% for post in posts %}
+                        <li class="animate-list-entry">
+                            <a href="/posts/{{ post.meta.slug }}.html"
+                               class="d-block rounded bg-light-hover p-1 cursor-pointer">
+                                    <span class="fs-1 fw-medium mt-0 {% if slug == post.meta.slug %}text-gray{% endif %}">
+                                        {{ post.meta.title }}
+                                    </span>
+                                {% if post.meta.title_meta %}
+                                    &mdash; <small
+                                        class="text-gray font-primary fw-normal">{{ post.meta.title_meta }}</small>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
