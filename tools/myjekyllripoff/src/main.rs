@@ -188,10 +188,10 @@ impl BuildInstance {
 
         let final_output = main_template.render(&main_globals).unwrap();
 
-        fs::create_dir_all("dist")?;
+        fs::create_dir_all("docs")?;
 
         let mut out_file = fs::File::options().write(true)
-            .truncate(true).create(true).open("dist/index.html")?;
+            .truncate(true).create(true).open("docs/index.html")?;
 
         out_file.write_all(final_output.as_bytes())?;
 
@@ -255,9 +255,9 @@ impl BuildInstance {
 
             let final_output = final_template.render(&final_globals).unwrap();
 
-            fs::create_dir_all("dist/posts/")?;
+            fs::create_dir_all("docs/posts/")?;
 
-            let file_name = format!("dist/posts/{}.html",
+            let file_name = format!("docs/posts/{}.html",
                                     post.meta.as_ref().unwrap().slug);
 
             let mut out_file = fs::File::options().write(true).create(true)
@@ -298,7 +298,7 @@ impl BuildInstance {
     fn process_asset(path: &Path, sub_folder: &str) -> Result<(), Box<dyn Error>> {
         let scss_regex = Regex::new(r".+\.scss")?;
 
-        let sub_folder_dir = format!("dist/static/{}", sub_folder);
+        let sub_folder_dir = format!("docs/static/{}", sub_folder);
 
         fs::create_dir_all(sub_folder_dir.as_str())?;
 
@@ -378,9 +378,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let accept_pattern = Regex::new(r"(posts|layouts|assets)/")?;
 
-    // adding this to force dist from being watched because dist contains a
+    // adding this to force docs from being watched because docs contains a
     // posts/ dir which matches the accept_pattern
-    let ignore_pattern = Regex::new(r"(dist)")?;
+    let ignore_pattern = Regex::new(r"(docs)")?;
 
     loop {
         match rx.recv() {
