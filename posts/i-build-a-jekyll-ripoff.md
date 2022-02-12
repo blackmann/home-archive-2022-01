@@ -22,8 +22,8 @@ Syntax, semantics, thought process. I also picked up [_Rust koans_](https://gith
 ## What happened    
 
 Last weekend, despite my immature experience with Rust, I decided to build a tool that will help me generate my site from `.md` files.
-I felt that would be _more lazier_ and convenient than learning a these existing site generators 😉.
-Just like how Jekyll and the rest works. So I laid out the process based on how I understood static generators worked.
+I felt that would be _more lazier_ and convenient than learning these existing site generators 😉.
+So I laid out the process based on how I understood static generators (like Jekyll) worked.
 
 <script src="https://gist.github.com/blackmann/d72a975aaae5e079e5ae339dfe20fcf0.js"></script>
 
