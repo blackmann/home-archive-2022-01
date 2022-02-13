@@ -47,12 +47,18 @@ Personally, (and practically) I begin by sketching out the screens involved in t
 And if this involves an API to the server, I outline the kind of models and endpoints required.
 This stage is very exciting because the vision for the end product becomes clearer.
 While planning, you need to imagine yourself as the user of the app and ask yourself questions about its usability, simplicity and discoverability.
-Do not marry your first ideas at this stage. If something doesn't fit well, take it out or improve it.
 
-Also, **do not think about code at all**. Take this from me: anything you sketch at this stage can be done.
-Do not worry if you know how code some part or not. That's what the research and study stages are for.
+Do not marry your first ideas at this stage. If something doesn't fit well, take it out or improve it. 
+You can find inspiration from other apps.
+
+Also, **do not think about code at all**. Anything you sketch at this stage can be done.
+Do not worry if you know how code some part or not. That's what the research and study stage is for.
 
 This is not to say you need to be very detailed at this stage. 
+The following is an image demonstrating how to sketch your screens [and prepare API requirements]. 
+Consider an online shopping app:
+
+<img src="/static/images/sketch.jpeg" alt="Pages sketch">
 
 From this exercise, you begin to realize the knowledge gaps needed to be filled to complete the project.
 
@@ -84,7 +90,7 @@ Now as you find the solutions to the various pieces of your app, you could do th
 - Annotate your sketch with how you can solve that part with your research
 - Quickly try out what you found as a solution in an online code runner to test your understanding and modify it to see if you can apply it as an actual solution to your problem.
 
-The basic takeaway here is that, you need to find ideas on how to solve the simple pieces of your app.
+The basic takeaway here is that, you need to find ideas on how to solve the smaller pieces/components of your app.
 
 
 ## Done
@@ -92,5 +98,14 @@ The basic takeaway here is that, you need to find ideas on how to solve the simp
 After completing the exercises above, programming will become the easier part. 
 But without demonstrating, it may be hard get started with this method. 
 And to be fair, there aren't a lot of _video_ tutorials to demonstrate these methods. 
+
 So in some consecutive posts, we'll practically build a project straight from planning through coding.
 I'll notify updates on that on my [Twitter](https://twitter.com/__degreat), but you can check here periodically to follow progress.
+
+
+### More resources while you wait
+
+- [App Sketches](https://www.pinterest.com/pin/239605642645185767/) [Pinterest] - watch a lot of related pins to get used how sketches are made.
+- [ERDs](https://www.lucidchart.com/pages/er-diagrams)
+- [What is REST](https://www.redhat.com/en/topics/api/what-is-a-rest-api)
+- [Restful Service with Express/JS](https://www.robinwieruch.de/node-express-server-rest-api/)
