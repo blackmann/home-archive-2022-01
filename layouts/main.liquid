@@ -8,8 +8,13 @@
     <title>{{ title }} | Not Gr / blackmann</title>
     <link rel="stylesheet" href="/static/main.css"/>
     <meta name="description"
-          content="{{ description | default: "I'm De-Great. A Senior Frontend Developer. I primarily work with Javascript and Rust. Experiment a lot on random stuff and keep the office vibes going." }}"/>
+          content="{{ description | default: "I'm De-Great. A Senior Frontend Developer. I primarily work with Javascript and Rust. Experiment a lot on random stuff and keep the office vibes going." | replace: '"', "'" }}"/>
     <meta name="theme-color" content="#efefef"/>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ title | replace: '"', "'" }}" />
+    <meta property="og:description" content="{{ description | default: "I'm De-Great. A Senior Frontend Developer. I primarily work with Javascript and Rust. Experiment a lot on random stuff and keep the office vibes going." | replace: '"', "'" }}" />
+    <meta property="og:url" content="https://degreat.co.uk{{ path }}"/>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-SB4PQVZYY0"></script>

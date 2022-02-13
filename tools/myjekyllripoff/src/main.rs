@@ -1,18 +1,19 @@
-use std::{fs};
+use std::fs;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs::read_dir;
 use std::io::{Read, Write};
-use std::path::{Path};
+use std::path::Path;
 use std::sync::mpsc::channel;
 use std::time::Duration;
+
 use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
 use chrono::serde::ts_seconds_option;
 use comrak::{Arena, ComrakOptions, format_html, parse_document};
 use comrak::nodes::NodeValue;
 use notify::{DebouncedEvent, RecursiveMode, watcher, Watcher};
 use regex::Regex;
-use rsass::{compile_scss_path};
+use rsass::compile_scss_path;
 use serde::{Deserialize, Serialize};
 
 const FRONT_MATTER_DELIMITER: &str = "---";
@@ -184,6 +185,7 @@ impl BuildInstance {
             "content": content_output,
             "description": "",
             "title": "Welcome",
+            "path": ""
         });
 
         let final_output = main_template.render(&main_globals).unwrap();
@@ -250,7 +252,8 @@ impl BuildInstance {
                 "content": post_output,
                 "description": post.meta.as_ref().unwrap().description,
                 "title": title,
-                "show_home": true
+                "show_home": true,
+                "path": format!("/posts/{}.html", post.meta.as_ref().unwrap().slug)
             });
 
             let final_output = final_template.render(&final_globals).unwrap();
