@@ -73,6 +73,18 @@ main {
   margin-bottom: 7rem;
 }
 
+table {
+  width: 100%;
+}
+table th, table td {
+  text-align: left;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  border-bottom: 1px solid #eaeaea;
+  padding-right: 2rem;
+  vertical-align: top;
+}
+
 .animate-list-entry {
   counter-increment: list-counter;
   animation-name: list-entry;
@@ -469,6 +481,10 @@ main {
   opacity: 1;
 }
 
+.table-wrapper {
+  overflow-x: scroll;
+}
+
 .text-gray {
   color: #777777;
 }
@@ -531,8 +547,15 @@ main {
   }
 }
 
+.d-block-mobile {
+  display: none;
+}
+
 @media screen and (max-width: 480px) {
   .col-35, .col-40, .col-60, .col-65, .col-66, .col-33 {
     width: 100%;
+  }
+  .d-block-mobile {
+    display: block;
   }
 }

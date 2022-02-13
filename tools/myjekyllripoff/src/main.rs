@@ -129,6 +129,7 @@ impl BuildInstance {
 
                 let mut comrak_options = ComrakOptions::default();
                 comrak_options.extension.front_matter_delimiter = Some(String::from(FRONT_MATTER_DELIMITER));
+                comrak_options.extension.table = true;
                 comrak_options.render.unsafe_ = true;
 
                 let root = parse_document(&arena,

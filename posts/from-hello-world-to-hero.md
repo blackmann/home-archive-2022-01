@@ -45,6 +45,22 @@ They are also easy but lay down the groundwork for programming to be way easier.
 This involves expanding on your idea of the app. 
 Personally, (and practically) I begin by sketching out the screens involved in the project. 
 And if this involves an API to the server, I outline the kind of models and endpoints required.
+
+For example a shopping app may need the following models with properties:
+
+<div class="table-wrapper">
+
+| Models →              | Product                                            | Checkout                                                                              | User                                 |
+|-----------------------|----------------------------------------------------|---------------------------------------------------------------------------------------|--------------------------------------|
+| <b>Properties</b> →   | `title`<br/>`description`<br/>`price`<br/>`images` | `customer`<br/>`items`<br/>`items_total`<br/>`payment_method`<br/>`delivery_location` | `full_name`<br/>`email`<br/>`avatar` |
+| <b>Endpoints/APIs</b> | Create, Get and Edit Product                       | Create and Get Checkout                                                               | Create, Get and Edit user            |
+
+</div>
+
+<small class="d-block-mobile text-gray">Scroll left/right 👆🏽</small>
+
+> Create/Edit/Get are a subset of actions known as CRUD. Read more here: [What is a CRUD App](https://budibase.com/blog/crud-app/)
+
 This stage is very exciting because the vision for the end product becomes clearer.
 While planning, you need to imagine yourself as the user of the app and ask yourself questions about its usability, simplicity and discoverability.
 

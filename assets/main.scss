@@ -86,6 +86,19 @@ main {
   margin-bottom: 7rem;
 }
 
+table {
+  width: 100%;
+
+  th, td {
+    text-align: left;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    border-bottom: 1px solid $light;
+    padding-right: 2rem;
+    vertical-align: top;
+  }
+}
+
 .animate-list-entry {
   counter-increment: list-counter;
   animation-name: list-entry;
@@ -354,6 +367,10 @@ main {
   }
 }
 
+.table-wrapper {
+  overflow-x: scroll;
+}
+
 .text-gray {
   color: $gray;
 }
@@ -406,9 +423,19 @@ main {
   100% { transform: scale(1,1)      translateY(0); }
 }
 
+// Visibility
+
+.d-block-mobile {
+  display: none;
+}
+
 // Other breakpoints 768, 1024
 @media screen and (max-width: 480px) {
   .col-35, .col-40, .col-60, .col-65, .col-66, .col-33 {
     width: 100%;
+  }
+
+  .d-block-mobile {
+    display: block;
   }
 }

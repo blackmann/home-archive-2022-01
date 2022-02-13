@@ -73,8 +73,39 @@ They are also easy but lay down the groundwork for programming to be way easier.
 <h3>Planning 🗺</h3>
 <p>This involves expanding on your idea of the app.
 Personally, (and practically) I begin by sketching out the screens involved in the project.
-And if this involves an API to the server, I outline the kind of models and endpoints required.
-This stage is very exciting because the vision for the end product becomes clearer.
+And if this involves an API to the server, I outline the kind of models and endpoints required.</p>
+<p>For example a shopping app may need the following models with properties:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Models →</th>
+<th>Product</th>
+<th>Checkout</th>
+<th>User</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><b>Properties</b> →</td>
+<td><code>title</code><br/><code>description</code><br/><code>price</code><br/><code>images</code></td>
+<td><code>customer</code><br/><code>items</code><br/><code>items_total</code><br/><code>payment_method</code><br/><code>delivery_location</code></td>
+<td><code>full_name</code><br/><code>email</code><br/><code>avatar</code></td>
+</tr>
+<tr>
+<td><b>Endpoints/APIs</b></td>
+<td>Create, Get and Edit Product</td>
+<td>Create and Get Checkout</td>
+<td>Create, Get and Edit user</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><small class="d-block-mobile text-gray">Scroll left/right 👆🏽</small></p>
+<blockquote>
+<p>Create/Edit/Get are a subset of actions known as CRUD. Read more here: <a href="https://budibase.com/blog/crud-app/">What is a CRUD App</a></p>
+</blockquote>
+<p>This stage is very exciting because the vision for the end product becomes clearer.
 While planning, you need to imagine yourself as the user of the app and ask yourself questions about its usability, simplicity and discoverability.</p>
 <p>Do not marry your first ideas at this stage. If something doesn't fit well, take it out or improve it.
 You can find inspiration from other apps.</p>
