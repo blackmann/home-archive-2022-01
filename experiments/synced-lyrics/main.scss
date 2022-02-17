@@ -1,0 +1,47 @@
+.synced-lyrics {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .player {
+  }
+
+  #lyrics {
+    border: 1px solid gainsboro;
+    border-radius: 0.5rem;
+    max-height: 500px;
+    max-width: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+
+    &::before {
+      content: "";
+      width: calc(100% + 2rem);
+      display: block;
+      height: 70px;
+      background: linear-gradient(#fff, #fff0);
+      position: sticky;
+      top: -1rem;
+      margin: -1rem;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+
+    li {
+      font-size: 20pt;
+      font-weight: 700;
+      margin: 1.75rem 0;
+      color: gainsboro;
+      transition: color 250ms ease-out;
+      cursor: pointer;
+
+      &:hover {
+        color: #1c1c1c;
+      }
+    }
+  }
+}
+

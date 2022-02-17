@@ -1,0 +1,15 @@
+{
+  "name": "synced-lyrics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "insert-lyrics.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "De-Great Yartey <mail@degreat.co.uk>",
+  "license": "ISC",
+  "dependencies": {
+    "node-html-parser": "^5.2.0"
+  }
+}
