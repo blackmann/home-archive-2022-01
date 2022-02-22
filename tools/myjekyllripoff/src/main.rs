@@ -382,6 +382,8 @@ impl BuildInstance {
                 "experiment_markup": experiment.experiment_markup,
                 "notes": experiment.notes,
                 "slug": experiment.meta.slug,
+                "description": experiment.meta.description,
+                "title": experiment.meta.title,
             });
 
             let experiment_content = experiment_template.render(&experiment_globals)?;

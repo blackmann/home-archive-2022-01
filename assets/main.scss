@@ -44,8 +44,13 @@ blockquote {
   padding-left: 1rem;
   font-style: italic;
   font-size: 1.3rem;
-  color: $gray;
   line-height: 1.8rem;
+  word-break: break-all;
+
+  p {
+    color: $gray;
+  }
+
 }
 
 body {
@@ -418,6 +423,10 @@ table {
   padding-right: 1rem;
 }
 
+.pb-0 {
+  padding-bottom: 0;
+}
+
 .rounded {
   border-radius: $border-radius;
 }
@@ -438,6 +447,13 @@ table {
   &:hover {
     opacity: 1;
   }
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-family: $font-primary;
+  font-weight: normal;
+  color: $gray;
 }
 
 .table-wrapper {

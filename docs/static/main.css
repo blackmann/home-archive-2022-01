@@ -31,8 +31,11 @@ blockquote {
   padding-left: 1rem;
   font-style: italic;
   font-size: 1.3rem;
-  color: #777777;
   line-height: 1.8rem;
+  word-break: break-all;
+}
+blockquote p {
+  color: #777777;
 }
 
 body {
@@ -526,6 +529,10 @@ table th, table td {
   padding-right: 1rem;
 }
 
+.pb-0 {
+  padding-bottom: 0;
+}
+
 .rounded {
   border-radius: 8px;
 }
@@ -545,6 +552,13 @@ table th, table td {
 }
 .stealth:hover {
   opacity: 1;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: normal;
+  color: #777777;
 }
 
 .table-wrapper {
