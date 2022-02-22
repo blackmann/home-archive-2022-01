@@ -142,7 +142,7 @@
     </div>
 
     <div>
-      <audio src="roddy-rich_the-box.mp3" controls="" class="audio-player"></audio>
+      <audio class="audio-player" controls="" src="roddy-rich_the-box.mp3"></audio>
     </div>
   </div>
 </main>
@@ -156,9 +156,65 @@ That was many years ago. Even though the title says <strong>Synced Lyrics from A
 </blockquote>
 <p>But recently, I've been closer to Apple Music than with Musixmatch and I attribute the inspiration to the former.</p>
 <h2>How I built this</h2>
+<p>So I'm going to list the challenges I thought I would face and how I could solve them - giving myself options.</p>
+<h3>Lyrics file</h3>
+<p>I knew there would be a standardised lyrics file format.
+And I also knew there was a higher probability of getting a lyrics file for free online.
+So I searched for &quot;Roddy Rich The Box lyrics file&quot; and I got a <a href="https://www.megalobiz.com/lrc/maker/The+box.54814151">result</a>.
+Then given what I was seeing, I wanted to confirm if that was a standard lyrics file.
+Knowing that it was a standard lyrics file will give the assurance that every lyrics' file I find will follow that pattern.
+This Wikipedia article (<a href="https://en.wikipedia.org/wiki/LRC_(file_format)">LRC (file format)</a>) gave me the assurance.</p>
+<h3>Rendering the lyrics</h3>
+<p>There are a couple of options to choose from on how to render the markup for the lyrics.</p>
+<ol>
+<li><code>Dynamic Rendering</code>: With this method, what could be done is have a list of tracks with their lyrics and as the user clicks through the tracks, you render the lyrics. This would mean, you provide a container element in your HTML markup then update the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML"><code>innerHtml</code></a> of that element with a rendered lyrics markup whenever the track changes</li>
+<li><code>Static Rendering</code>: This means the lyrics are already included on the page's markup. That is, you type each line of the lyrics into your HTML file.</li>
+</ol>
+<p>The difference between the two options is the same when talking about <a href="https://www.clariontech.com/blog/server-side-rendering-vs.-client-side-rendering">Server-Side Rendering vs Client-Side Rendering</a> - with client-side being the dynamic option.</p>
+<p>I went with static rendering because of SEO and accessibility benefits.
+But this doesn't mean I typed each line into the markup. I wrote a simple node script to parse the lyrics file and generate/insert the markup into a target HTML file.
+Source here: <a href="https://github.com/blackmann/blackmann.github.io/blob/master/experiments/synced-lyrics/insert-lyrics.js"><code>insert-lyrics.js</code></a></p>
+<h4>Semantic</h4>
+<p>We could choose to between paragraph (<code>&lt;p/&gt;</code>) tags or list (<code>&lt;li/&gt;</code>) tags. I preferred the list tags. Makes more sense to me than a paragraph.</p>
+<h3>Syncing the lyrics</h3>
+<p>This was the most interesting part for me.
+A couple of things to have in mind are:</p>
+<ol>
+<li>As the song plays, we need to move the lyric up.</li>
+<li>When a user moves (seeks) the song forward or backwards, we need to show the correct/current line to that effect.</li>
+<li>When a user clicks on lyrics line, we need to move (seek) the song to that line.</li>
+</ol>
 <blockquote>
-<p>Coming next week</p>
+<p>Being able to list down challenges to a problem gives you a head start on where to start tacking your problems.</p>
 </blockquote>
+<p>From point <strong>3</strong>, I got an <a href="https://en.wikipedia.org/wiki/Eureka_(word)"><em>eureka</em></a> to annotate each line with the time it starts.
+Then, when a user clicks on that line, we move the player to that time.</p>
+<p>Now since we have each line annotated with its start time, to scroll to that line we can just get the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect"><code>bounding_rectangle</code></a><code> &gt; top</code> of that line and move by that distance.
+The snippet below demonstrates what I mean</p>
+<script src="https://gist.github.com/blackmann/d22ab1e2463ccd0135aa766a503dec0e.js"></script>
+<p>Now for point <strong>2</strong> and <strong>3</strong>, the approach is to figure the event when time changes for an audio.
+Reading through the docs for <code>&lt;audio/&gt;</code> from <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio">MDN</a>, I find out that, that event is <code>timeupdate</code>.</p>
+<p>What this means going forward is that, whenever <code>timeupdate</code> event fires for the <code>&lt;audio /&gt;</code> - while playing or user clicks on the seekbar -  we will find the line that spans that time and scroll it into view.</p>
+<script src="https://gist.github.com/blackmann/f9199ffb0422d4679b92ef9c1911ad3a.js"></script>
+<h4>Finding the lyric line for a time</h4>
+<p>The function to find the correct lyric line (for a <code>currentTime</code>) can follow this ad-hoc approach:</p>
+<ol>
+<li>let <code>found</code> (the result) be <code>undefined</code></li>
+<li>iterate through the list of lyrics lines, call each line <code>line</code>
+<ol>
+<li>if the <code>currentTime &lt;= line.time</code>, then <code>found = line</code></li>
+<li>else break (from the iteration)</li>
+</ol>
+</li>
+</ol>
+<p>As simple as that. But this method uses a <a href="https://en.wikipedia.org/wiki/Time_complexity#Linear_time">Linear Time Complexity</a>.
+<em>O(n)</em> complexities aren't that terrible. But if we have the opportunity to improve our code, let's take it.</p>
+<p>We can improve this line search by using <a href="https://en.wikipedia.org/wiki/Binary_search_algorithm">Binary Search</a> algorithm which is way faster than our linear search method.</p>
+<p>That solution will look like this:</p>
+<script src="https://gist.github.com/blackmann/1781189eb6ca2ee329940768a8379b3a.js"></script>
+<h2>Done</h2>
+<p>So this is the breakdown for how I worked on this. The complete source code can be found <a href="https://github.com/blackmann/blackmann.github.io/blob/master/experiments/synced-lyrics/main.js">here/Github</a>.
+Only 61 lines of Javascript code.</p>
 
                 </article>
             </div>
