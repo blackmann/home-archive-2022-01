@@ -1,4 +1,4 @@
-# The home 🏠 I'm finally sticking with
+# The home 🏠 I'm finally living in
 
 I have settled for this simplified but carefully crafted homepage for myself. I built a custom generator you can locate at `tools/myjekyllripoff` (written in Rust 🦀) to allow templating and quick content creation.
 

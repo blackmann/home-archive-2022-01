@@ -35,14 +35,21 @@
     </script>
 </head>
 <body>
+<nav class="container ph-1 nav-main">
+    {% if show_home %}
+        <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
+
+        <button class="font-secondary fw-medium mt-2 more d-block-mobile"
+                data-target="content-navigation"
+                data-content="content">More</button>
+    {% endif %}
+</nav>
+
 <main>
-    <header class="container ph-1">
-        {% if show_home %}
-            <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
-        {% endif %}
-    </header>
     {{ content }}
 </main>
+
+<script src="/static/js/main.js"></script>
 
 {% if scripts %}
 {% for script in scripts %}

@@ -35,15 +35,20 @@
     </script>
 </head>
 <body>
+<nav class="container ph-1 nav-main">
+    
+        <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
+
+        <button class="font-secondary fw-medium mt-2 more d-block-mobile"
+                data-target="content-navigation"
+                data-content="content">More</button>
+    
+</nav>
+
 <main>
-    <header class="container ph-1">
-        
-            <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
-        
-    </header>
     <div class="container mt-3">
     <div class="row">
-        <div class="col-33 stealth">
+        <div class="col-33 stealth content-navigation">
             <div class="ph-1">
                 <h5 class="fs-1">🪛 All experiments</h5>
 
@@ -63,7 +68,7 @@
         </div>
 
 
-        <div class="col-66">
+        <div class="col-66 content">
             <div class="ph-1">
                 <main class="synced-lyrics">
   <div class="player">
@@ -135,14 +140,21 @@
     </div>
 
     <div>
-      <audio controls="" src="roddy-rich_the-box.mp3" class="audio-player"></audio>
+      <audio class="audio-player" controls="" src="roddy-rich_the-box.mp3"></audio>
     </div>
   </div>
 </main>
 
                 <article>
                     <h1>Motivation</h1>
-<p>I liked how...</p>
+<p>The first time I saw synced lyrics was with the <a href="https://www.musixmatch.com">Musixmatch</a> app.
+That was many years ago. Even though the title says <strong>Synced Lyrics from Apple 🍎</strong>, I'm just [literally] finding out from the Musixmatch homepage that Apple uses their services.</p>
+<blockquote>
+<p>Read here: <a href="https://about.musixmatch.com/business/customer-stories/apple-music">https://about.musixmatch.com/business/customer-stories/apple-music</a></p>
+</blockquote>
+<p>But recently, I've been closer to Apple Music than with Musixmatch and I attribute the inspiration to the former.</p>
+<h2>How I built this</h2>
+<p>[TODO]</p>
 
                 </article>
             </div>
@@ -150,6 +162,8 @@
     </div>
 </div>
 </main>
+
+<script src="/static/js/main.js"></script>
 
 
 

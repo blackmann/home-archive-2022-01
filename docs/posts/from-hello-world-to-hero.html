@@ -31,15 +31,20 @@
     </script>
 </head>
 <body>
+<nav class="container ph-1 nav-main">
+    
+        <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
+
+        <button class="font-secondary fw-medium mt-2 more d-block-mobile"
+                data-target="content-navigation"
+                data-content="content">More</button>
+    
+</nav>
+
 <main>
-    <header class="container ph-1">
-        
-            <a href="/" class="font-secondary home-link fw-medium mt-2">Go back home</a>
-        
-    </header>
     <div class="container mt-3">
     <div class="row">
-        <div class="col-66">
+        <div class="col-66 content">
             <div class="ph-1">
                 <h1>From "Hello, World!" to Hero. Planning and Building Software 💽</h1>
                 <p class="text-gray">Written 12 February 2022 
@@ -159,7 +164,7 @@ I'll notify updates on that on my <a href="https://twitter.com/__degreat">Twitte
             </div>
         </div>
 
-        <div class="col-33 stealth">
+        <div class="col-33 stealth content-navigation">
             <div class="ph-1">
                 <h5 class="fs-1">Continue Reading…</h5>
 
@@ -207,6 +212,8 @@ I'll notify updates on that on my <a href="https://twitter.com/__degreat">Twitte
     </div>
 </div>
 </main>
+
+<script src="/static/js/main.js"></script>
 
 
 
