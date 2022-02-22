@@ -1,6 +1,6 @@
-use std::fs;
 use std::collections::HashMap;
 use std::error::Error;
+use std::fs;
 use std::fs::read_dir;
 use std::io::{Read, Write};
 use std::path::Path;
@@ -14,10 +14,12 @@ use comrak::nodes::NodeValue;
 use notify::{DebouncedEvent, RecursiveMode, watcher, Watcher};
 use regex::Regex;
 use rsass::compile_scss_path;
+use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 
 const FRONT_MATTER_DELIMITER: &str = "---";
 const POSTS_LAYOUT: &str = "./layouts/post.liquid";
+const EXPERIMENTS_LAYOUT: &str = "./layouts/experiment.liquid";
 const HOME_LAYOUT: &str = "./layouts/home.liquid";
 const MAIN_LAYOUT: &str = "./layouts/main.liquid";
 
@@ -84,7 +86,7 @@ impl PostMeta {
             slug,
             next,
             title_meta,
-            description
+            description,
         }
     }
 }
@@ -95,25 +97,52 @@ struct Post {
     meta: Option<PostMeta>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct ExperimentMeta {
+    title: String,
+    slug: String,
+    description: String,
+    assets: Vec<String>,
+    styles: Vec<String>,
+    scripts: Vec<String>,
+    prepack: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Experiment {
+    experiment_markup: String,
+    notes: String,
+    meta: ExperimentMeta,
+}
+
 struct BuildInstance {
+    comrak_options: ComrakOptions,
     posts: Vec<Post>,
+    experiments: Vec<Experiment>,
 }
 
 impl BuildInstance {
     fn new() -> BuildInstance {
+        let mut comrak_options = ComrakOptions::default();
+        comrak_options.extension.front_matter_delimiter = Some(String::from(FRONT_MATTER_DELIMITER));
+        comrak_options.extension.table = true;
+        comrak_options.render.unsafe_ = true;
+
         BuildInstance {
+            comrak_options,
             posts: vec![],
+            experiments: vec![],
         }
     }
 
-    fn initialize(&mut self) -> Result<(), Box<dyn Error>> {
+    fn prepare_posts(&mut self) -> Result<(), Box<dyn Error>> {
         self.posts.clear();
 
         // fetch all posts and derive their front matter
-        let directory_content = read_dir("./posts")?;
+        let posts_directory = read_dir("./posts")?;
         let md_file_regex = Regex::new(r".+\.md")?;
 
-        for path in directory_content {
+        for path in posts_directory {
             let dir_entry = path.expect("Invalid directory entry");
             let metadata = dir_entry.metadata()?;
 
@@ -127,14 +156,9 @@ impl BuildInstance {
 
                 let arena = Arena::new();
 
-                let mut comrak_options = ComrakOptions::default();
-                comrak_options.extension.front_matter_delimiter = Some(String::from(FRONT_MATTER_DELIMITER));
-                comrak_options.extension.table = true;
-                comrak_options.render.unsafe_ = true;
-
                 let root = parse_document(&arena,
                                           md_content.as_str(),
-                                          &comrak_options);
+                                          &self.comrak_options);
 
                 let mut post = Post {
                     meta: None,
@@ -150,7 +174,7 @@ impl BuildInstance {
 
                 let mut html = vec![];
 
-                format_html(root, &comrak_options, &mut html).expect("Failed to convert to html");
+                format_html(root, &self.comrak_options, &mut html).expect("Failed to convert to html");
 
                 post.raw_content = Some(String::from_utf8(html)?);
 
@@ -161,6 +185,74 @@ impl BuildInstance {
         self.posts.sort_by(|post1, post2| {
             return post2.meta.as_ref().unwrap().date.cmp(&post1.meta.as_ref().unwrap().date);
         });
+
+        Ok(())
+    }
+
+    fn prepare_experiments(&mut self) -> Result<(), Box<dyn Error>> {
+        self.experiments.clear();
+
+        let base_path = "experiments";
+
+        let experiments_directory = read_dir(base_path)?;
+
+        for path in experiments_directory {
+            let dir_entry = path?;
+
+            if dir_entry.metadata().unwrap().is_dir() {
+                let filename = dir_entry.file_name();
+                let dir_name = filename.to_str().unwrap();
+                let manifest_path = format!("{}/{}/manifest.json", base_path, dir_name);
+
+                let manifest_content = read_file_to_string(manifest_path.as_str())?;
+
+                // TODO: use full path for the assets
+                let mut experiment_meta: ExperimentMeta = serde_json::from_str(manifest_content.as_str())?;
+
+                for asset in experiment_meta.assets.iter_mut() {
+                    *asset = format!("{}/{}/{}", base_path, dir_name, asset);
+                }
+
+                let index_path = format!("{}/{}/index.html", base_path, dir_name);
+
+                let index_content = read_file_to_string(index_path.as_str())?;
+
+                let html_content = Html::parse_document(index_content.as_str());
+
+                let main_selector = Selector::parse("main").unwrap();
+                let mut main_content = html_content.select(&main_selector);
+
+                let main_markup = main_content.next().unwrap().html();
+
+                let notes_path = format!("{}/{}/README.md", base_path, dir_name);
+
+                let notes_markdown = read_file_to_string(notes_path.as_str())?;
+
+                let arena = Arena::new();
+
+                let root = parse_document(&arena,
+                                          notes_markdown.as_str(),
+                                          &self.comrak_options);
+
+                let mut html = vec![];
+
+                format_html(root, &self.comrak_options, &mut html).expect("Failed to convert to html");
+
+                self.experiments.push(Experiment {
+                    meta: experiment_meta,
+                    experiment_markup: main_markup,
+                    notes: String::from_utf8(html)?
+                })
+            }
+        }
+
+        Ok(())
+    }
+
+    fn initialize(&mut self) -> Result<(), Box<dyn Error>> {
+        println!("🧹 Initializing...");
+        self.prepare_posts()?;
+        self.prepare_experiments()?;
 
         Ok(())
     }
@@ -275,6 +367,60 @@ impl BuildInstance {
         Ok(())
     }
 
+    fn build_experiments(&self) -> Result<(), Box<dyn Error>> {
+        let experiment_layout = read_file_to_string(EXPERIMENTS_LAYOUT)?;
+        let experiment_template = liquid::ParserBuilder::with_stdlib()
+            .build().unwrap().parse(experiment_layout.as_str()).unwrap();
+
+        let main_layout = read_file_to_string(MAIN_LAYOUT)?;
+        let main_template = liquid::ParserBuilder::with_stdlib()
+            .build().unwrap().parse(main_layout.as_str()).unwrap();
+
+        for experiment in self.experiments.iter() {
+            let experiment_globals = liquid::object!({
+                "experiments": self.experiments,
+                "experiment_markup": experiment.experiment_markup,
+                "notes": experiment.notes,
+                "slug": experiment.meta.slug,
+            });
+
+            let experiment_content = experiment_template.render(&experiment_globals)?;
+
+            let final_globals = liquid::object!({
+                "content": experiment_content,
+                "description": experiment.meta.description,
+                "title": experiment.meta.title,
+                "show_home": true,
+                "path": format!("/experiments/{}", experiment.meta.slug),
+                "scripts": experiment.meta.scripts,
+                "styles": experiment.meta.styles
+            });
+
+            let final_output = main_template.render(&final_globals).unwrap();
+
+            let slug = experiment.meta.slug.as_str();
+            let slugged_path = format!("docs/experiments/{}", slug);
+            let experiment_path = slugged_path.as_str();
+
+            fs::create_dir_all(experiment_path)?;
+
+            let file_name = format!("{}/index.html", experiment_path);
+
+            let mut out_file = fs::File::options().write(true).create(true)
+                .truncate(true).open(String::from(&file_name))?;
+
+            out_file.write_all(final_output.as_bytes())?;
+
+            for asset in experiment.meta.assets.iter() {
+                fs::copy(asset, format!("docs/{}", asset))?;
+            }
+
+            println!("🧪 Written {}", file_name);
+        }
+
+        Ok(())
+    }
+
     fn get_related_posts(&self, mut cursor_index: usize) -> Vec<&Post> {
         let mut results: Vec<&Post> = vec![];
 
@@ -355,6 +501,7 @@ impl BuildInstance {
         self.initialize()?;
         self.build_homepage()?;
         self.build_posts()?;
+        self.build_experiments()?;
         self.pack_assets()?;
 
         Ok(())

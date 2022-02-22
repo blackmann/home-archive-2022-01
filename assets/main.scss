@@ -206,6 +206,32 @@ table {
   display: flex;
 }
 
+.experiment-link {
+  $alternate-time: 820ms;
+
+  .test-tube {
+    display: inline-block;
+  }
+
+  &:hover {
+    .link-text {
+      background: linear-gradient(45deg, $gray, #f3e768, #a0f368, $gray);
+      background-size: 200% auto;
+      -webkit-animation: swipe-background $alternate-time ease infinite alternate-reverse;
+      -moz-animation: swipe-background $alternate-time ease infinite alternate-reverse;
+      animation: swipe-background $alternate-time ease infinite alternate-reverse;
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-fill-color: white;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .test-tube {
+      animation: swing-backforth 1200ms ease-in-out infinite alternate-reverse;
+    }
+  }
+}
+
 .fade-up {
   animation: fade-up 800ms ease-out;
 }
@@ -284,6 +310,8 @@ table {
 
 .horizontal-list {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .hover-dark {
@@ -329,6 +357,10 @@ table {
 
 .mt-3 {
   margin-top: 3rem;
+}
+
+.mt-5 {
+  margin-top: 5rem;
 }
 
 .my-5 {
@@ -388,6 +420,35 @@ table {
 }
 
 // Animations
+
+@keyframes swipe-background {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes swing-backforth {
+  0% {
+    transform: rotate(0deg)
+  }
+
+  30% {
+    transform: rotate(15deg);
+  }
+
+  50% {
+    transform: rotate(-5deg);
+  }
+
+  70% {
+    transform: rotate(15deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
 
 @keyframes list-entry {
   0% {

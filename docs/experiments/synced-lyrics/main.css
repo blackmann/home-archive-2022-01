@@ -1,0 +1,68 @@
+.synced-lyrics {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+.synced-lyrics ul {
+  list-style: none;
+  padding-left: 0;
+}
+.synced-lyrics .player {
+  max-width: 420px;
+}
+.synced-lyrics .player .audio-player {
+  margin: 1rem 0;
+  width: 100%;
+}
+.synced-lyrics .player .title {
+  margin-bottom: 0;
+  font-weight: 500;
+  font-size: 14pt;
+}
+.synced-lyrics .player .subtitle {
+  font-size: 10pt;
+  font-weight: normal;
+  color: #777;
+  margin: 0;
+}
+.synced-lyrics #lyrics {
+  border: 1px solid gainsboro;
+  border-radius: 0.5rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 1rem;
+}
+.synced-lyrics #lyrics::before {
+  content: "";
+  width: calc(100% + 2rem);
+  display: block;
+  height: 70px;
+  background: linear-gradient(#fff, #fff0);
+  position: sticky;
+  top: -1rem;
+  margin: -1rem;
+  z-index: 2;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+.synced-lyrics #lyrics::after {
+  content: "";
+  height: 500px;
+  display: block;
+}
+.synced-lyrics #lyrics li {
+  font-size: 20pt;
+  font-weight: 700;
+  margin: 1.75rem 0;
+  color: gainsboro;
+  filter: blur(0);
+  transition: all 260ms ease-out;
+  transition-property: filter, color;
+  cursor: pointer;
+}
+.synced-lyrics #lyrics li:hover, .synced-lyrics #lyrics li.active {
+  color: #1c1c1c;
+}
+.synced-lyrics #lyrics li:not(.active, :hover) {
+  filter: blur(1.5px);
+}
+
+/*# sourceMappingURL=main.css.map */

@@ -6,7 +6,15 @@
           content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ title }} | Not Gr / blackmann</title>
-    <link rel="stylesheet" href="/static/main.scss"/>
+    <link rel="shortcut icon" href="/static/icons/logo.png">
+    <link rel="stylesheet" href="/static/main.css"/>
+
+    {% if styles %}
+    {% for style in styles %}
+        <link rel="stylesheet" href="{{ style }}"/>
+    {% endfor %}
+    {% endif %}
+
     <meta name="description"
           content="{{ description | default: "I'm De-Great. A Senior Frontend Developer. I primarily work with Javascript and Rust. Experiment a lot on random stuff and keep the office vibes going." | replace: '"', "'" }}"/>
     <meta name="theme-color" content="#efefef"/>
@@ -35,6 +43,12 @@
     </header>
     {{ content }}
 </main>
+
+{% if scripts %}
+{% for script in scripts %}
+    <script src="{{ script }}"></script>
+{% endfor %}
+{% endif %}
 
 <footer class="container p-1">
     <small>Generated with <a href="https://github.com/blackmann/blackmann.github.io/tree/master/tools/myjekyllripoff"><code>myjekyllripoff</code></a> written in Rust.</small>

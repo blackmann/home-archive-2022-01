@@ -1,0 +1,33 @@
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-33 stealth">
+            <div class="ph-1">
+                <h5 class="fs-1">🪛 All experiments</h5>
+
+                <ul>
+                    {% for experiment in experiments %}
+                        <li class="animate-list-entry">
+                            <a href="/experiments/{{ experiment.meta.slug }}"
+                               class="d-block rounded bg-light-hover p-1 cursor-pointer">
+                                    <span class="fs-1 fw-medium mt-0 {% if slug == experiment.meta.slug %}text-gray{% endif %}">
+                                        {{ experiment.meta.title }}
+                                    </span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="col-66">
+            <div class="ph-1">
+                {{ experiment_markup }}
+
+                <article>
+                    {{ notes }}
+                </article>
+            </div>
+        </div>
+    </div>
+</div>

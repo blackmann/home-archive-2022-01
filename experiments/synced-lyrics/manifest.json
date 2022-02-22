@@ -1,0 +1,9 @@
+{
+  "title": "Synced Lyrics from Apple 🍎",
+  "description": "Reverse engineering Apple Music synced lyrics feature for the web using Javascript",
+  "assets": ["roddy-rich_the-box.mp3", "main.css", "main.js"],
+  "styles": ["main.css"],
+  "scripts": ["https://cdn.jsdelivr.net/npm/seamless-scroll-polyfill@2.1.6/lib/bundle.min.js","main.js"],
+  "prepack": "sass main.scss main.css",
+  "slug": "synced-lyrics"
+}
